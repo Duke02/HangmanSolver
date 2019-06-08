@@ -1,70 +1,75 @@
 import re
 
 
-def get_words(word_len):
-    # Open the file with all the words in the English language.
-    with open("words.txt") as word_file:
-        # Get all the words without any newlines.
+def get_words(word_len, filename="words.txt"):
+    """
+    Get all words that have the desired length from the given text file.
+
+    :param filename: The name of the file to load the words from.
+    :param word_len: The desired length of words.
+    :return: a list of words of the given length.
+    """
+    with open(filename) as word_file:
         words_temp = map(lambda s: s.strip(), word_file.readlines())
-        # filter the words so that they have the same number of characters as the word in play.
         words = [word.lower() for word in words_temp if len(word) is word_len]
-        # Get rid of any possible duplicates in the file.
         words = list(set(words))
     return words
 
 
 def get_possible_words(guesses, current_word):
-    # The total number of characters in the word.
+    """
+    Get all possible words based on the given `current_word` and `guesses`
+
+    :param guesses: what the player has already submitted as a guess
+    :param current_word: The current word at play.
+    :return: A list of all possible words.
+    """
+
     num_of_characters = len(current_word)
 
-    # Load the words in from the words.txt file.
     words = get_words(num_of_characters)
-
     # Get all words with just letters.
     words = list(filter(lambda w: w.isalpha(), words))
 
-    # Regex will give us an error if we have just started and
-    # no guesses, so if we don't need to exclude
-    # anything, include everything!
+    # Exclude any guesses, include everything else.
     if len(guesses) is 0:
         substitute = '.'
     else:
-        # exclude all of the characters that have already been guessed.
         substitute = f"[^{guesses}]"
 
-    # Make the current_word a regex phrase.
     current_word_regex = current_word.replace('_', substitute)
-
-    # Get the regex object for the current word
     regex_obj = re.compile(current_word_regex)
 
-    # Get all possible matches to the word.
     possible_matches = list(map(lambda word: regex_obj.match(word), words))
-
-    # Get all the words from those matches (filter None matches)
     possible_words = [match.string for match in possible_matches if match is not None]
 
-    # Print the list of possible words.
     return possible_words
 
 
 def get_statistics(possible_words):
-    # Join all of the words in the list into a giant string.
+    """
+    Gets the number of occurrences of the letters in the list possible_words
+
+    :param possible_words: The words that are to be analyzed.
+    :return: a dictionary as key: character, value: frequency of key in `possible_words`
+    """
     words_as_str = ''.join(possible_words)
-    # sort the characters in each word.
     words_as_str = ''.join(sorted(words_as_str))
 
-    # get all of the characters in the words.
     characters_in_words = ''.join(set(words_as_str))
 
-    # Get the frequencies of each letter in the words.
     frequencies = {c: words_as_str.count(c) for c in characters_in_words}
 
     return frequencies
 
 
 def get_likeliest_letter(stats):
-    # Get the most likely letter to guess.
+    """
+    Gets the likeliest letter and its likelihood in the given stats dict.
+
+    :param stats: a dict as key: character, value: frequency of key
+    :return: the likeliest_letter and its likelihood.
+    """
     likeliest_letter = max(stats, key=stats.get)
 
     # Get the likelihood of the letter as a percent.
@@ -74,12 +79,13 @@ def get_likeliest_letter(stats):
 
 
 def play_hangman():
-    is_playing = True
-    # All of the characters that the computer guessed wrong.
-    guesses = ""
+    """
+    Plays a game of hangman.
+    """
 
-    # the number of guesses the computer has made.
-    num_of_guesses = 0
+    is_playing = True
+
+    guesses = ""
 
     current_word = ""
 
@@ -96,24 +102,19 @@ def play_hangman():
         if current_word.count('_') is 0:
             break
 
-        # Get all of the possible words that can be guessed
         possible_words = get_possible_words(guesses, current_word)
 
         print(f"There are {len(possible_words)} possible words.")
 
-        # Print all of the possible words if there's not too many of them.
         if len(possible_words) <= 10:
             [print(word) for word in possible_words]
 
-        # Early exit if it we only have one guess.
         if len(possible_words) is 1:
             print(f"It's obviously {possible_words[0]}.")
             break
 
-        # Get the frequencies of each character in the possible words.
         stats = get_statistics(possible_words)
 
-        # Remove characters we've already guessed from the statistics.
         [stats.pop(guessed_letter, None) for guessed_letter in guesses]
 
         print("Your most likely letter is...")
@@ -124,14 +125,12 @@ def play_hangman():
 
         was_correct = input("Was I correct? (y/n) ").lower() == 'y'
 
-        # add our guess to the total listing of guesses.
-        num_of_guesses += 1
         guesses += likeliest_letter
 
         # Print a new line to break each round up.
         print("")
 
-    print(f"It took me {num_of_guesses} guesses to get it.")
+    print(f"It took me {len(guesses)} guesses to get it.")
 
 
 if __name__ == '__main__':
