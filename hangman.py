@@ -1,4 +1,6 @@
 import re
+from itertools import chain
+from collections import Counter
 
 
 def get_words(word_len, filename="words.txt"):
@@ -21,6 +23,7 @@ def get_possible_words(guesses, current_word, all_words):
     """
     Get all possible words based on the given `current_word` and `guesses`
 
+    :param all_words: All of the words that have been loaded in.
     :param guesses: what the player has already submitted as a guess
     :param current_word: The current word at play.
     :return: A list of all possible words.
@@ -32,35 +35,25 @@ def get_possible_words(guesses, current_word, all_words):
     return [word for word in all_words if current_word_regex.match(word)]
 
 
-def get_statistics(possible_words):
+def get_statistics(possible_words) -> Counter:
     """
     Gets the number of occurrences of the letters in the list possible_words
 
     :param possible_words: The words that are to be analyzed.
-    :return: a dictionary as key: character, value: frequency of key in `possible_words`
+    :return: a Counter object with a count of each letter in possible_words
     """
-    words_as_str = ''.join(possible_words)
-    words_as_str = ''.join(sorted(words_as_str))
-
-    characters_in_words = ''.join(set(words_as_str))
-
-    frequencies = {c: words_as_str.count(c) for c in characters_in_words}
-
-    return frequencies
+    return Counter(chain.from_iterable(possible_words))
 
 
-def get_likeliest_letter(stats):
+def get_likeliest_letter(stats: Counter):
     """
     Gets the likeliest letter and its likelihood in the given stats dict.
 
     :param stats: a dict as key: character, value: frequency of key
     :return: the likeliest_letter and its likelihood.
     """
-    likeliest_letter = max(stats, key=stats.get)
-
-    # Get the likelihood of the letter as a percent.
-    likelihood = stats[likeliest_letter] / sum(stats.values()) * 100.0
-
+    likeliest_letter, count = stats.most_common(1)[0]
+    likelihood = count / sum(stats.values()) * 100.0
     return likeliest_letter, likelihood
 
 
@@ -104,7 +97,7 @@ def play_hangman():
 
         stats_temp = get_statistics(possible_words)
 
-        stats = {key: value for key, value in stats_temp.items() if key not in guesses}
+        stats = Counter({key: value for key, value in stats_temp.items() if key not in guesses})
 
         print("Your most likely letter is...")
         likeliest_letter, likelihood = get_likeliest_letter(stats)
