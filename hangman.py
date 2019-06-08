@@ -125,6 +125,9 @@ def play_hangman():
         num_of_guesses += 1
         guesses += likeliest_letter
 
+        # Print a new line to break each round up.
+        print("")
+
     print(f"It took me {num_of_guesses} guesses to get it.")
 
 
