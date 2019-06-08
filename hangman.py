@@ -72,7 +72,7 @@ def play_hangman():
     while is_playing:
         # Get input from user of what is the word at the running of the script.
         print("What is currently on the board?")
-        current_word: str = input("(Input unknown characters with _)").lower()
+        current_word: str = input("(Input unknown characters with _) ").lower()
 
         # if we found the word, we can stop playing.
         if current_word.count('_') is 0:
