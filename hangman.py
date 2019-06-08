@@ -106,7 +106,7 @@ def play_hangman():
 
         was_correct = input("Was I correct? (y/n) ").lower() == 'y'
 
-        guesses += likeliest_letter
+        guesses += likeliest_letter[0]
 
         # Print a new line to break each round up.
         print("")
