@@ -11,7 +11,7 @@ def get_words(word_len):
     return words
 
 
-def play_round_of_hangman(guesses, current_word):
+def get_possible_words(guesses, current_word):
     # The total number of characters in the word.
     num_of_characters = len(current_word)
 
@@ -95,7 +95,7 @@ def play_hangman():
             break
 
         # Get all of the possible words that can be guessed
-        possible_words = play_round_of_hangman(guesses, current_word)
+        possible_words = get_possible_words(guesses, current_word)
 
         print(f"There are {len(possible_words)} possible words.")
 
