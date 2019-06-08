@@ -13,3 +13,7 @@ Hope you enjoy!
 
 ## Tools Used
 * Standard [Python 3.6](https://www.python.org/) install 
+
+## Regex
+For help with understanding Regex (regular expressions), [this
+site](https://regexr.com/) helped me a lot when I was first learning them.
