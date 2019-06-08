@@ -82,6 +82,9 @@ def play_hangman():
         if current_word.count('_') == 0:
             break
 
+        # Add any guesses that might have been missed in between rounds.
+        guesses += ''.join([guess for guess in current_word if guess != '_' and guess not in guesses])
+
         if len(words) == 0:
             words = get_words(len(current_word))
 
