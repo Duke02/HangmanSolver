@@ -84,12 +84,10 @@ def play_hangman():
     """
 
     is_playing = True
+    was_correct = True
 
     guesses = ""
-
     current_word = ""
-
-    was_correct = True
 
     while is_playing:
         # Get input from the user if the current word on the board
