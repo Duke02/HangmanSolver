@@ -1,9 +1,10 @@
 import re
 from itertools import chain
 from collections import Counter
+import typing
 
 
-def get_words(word_len, filename="words.txt"):
+def get_words(word_len: int, filename: str = "words.txt") -> typing.Set[str]:
     """
     Get all words that have the desired length from the given text file.
 
@@ -19,7 +20,7 @@ def get_words(word_len, filename="words.txt"):
         }
 
 
-def get_possible_words(guesses, current_word, all_words):
+def get_possible_words(guesses: str, current_word: str, all_words: typing.Iterable) -> typing.List[str]:
     """
     Get all possible words based on the given `current_word` and `guesses`
 
@@ -29,13 +30,13 @@ def get_possible_words(guesses, current_word, all_words):
     :return: A list of all possible words.
     """
 
-    substitute = '.' if len(guesses) == 0 else f"[^{guesses}]"
+    substitute: str = '.' if len(guesses) == 0 else f"[^{guesses}]"
     # Make the current word a regex phrase.
-    current_word_regex = re.compile(current_word.replace('_', substitute))
+    current_word_regex: typing.Pattern = re.compile(current_word.replace('_', substitute))
     return [word for word in all_words if current_word_regex.match(word)]
 
 
-def get_statistics(possible_words) -> Counter:
+def get_statistics(possible_words: typing.Iterable) -> Counter:
     """
     Gets the number of occurrences of the letters in the list possible_words
 
@@ -45,7 +46,7 @@ def get_statistics(possible_words) -> Counter:
     return Counter(chain.from_iterable(possible_words))
 
 
-def get_likeliest_letter(stats: Counter):
+def get_likeliest_letter(stats: Counter) -> typing.Tuple[str, float]:
     """
     Gets the likeliest letter and its likelihood in the given stats dict.
 
@@ -62,13 +63,13 @@ def play_hangman():
     Plays a game of hangman.
     """
 
-    is_playing = True
-    was_correct = True
+    is_playing: bool = True
+    was_correct: bool = True
 
-    guesses = ""
-    current_word = ""
+    guesses: str = ""
+    current_word: str = ""
 
-    words = []
+    words: typing.Set[str] = set()
 
     while is_playing:
         # Get input from the user if the current word on the board
@@ -84,7 +85,7 @@ def play_hangman():
         if len(words) == 0:
             words = get_words(len(current_word))
 
-        possible_words = get_possible_words(guesses, current_word, words)
+        possible_words: typing.List[str] = get_possible_words(guesses, current_word, words)
 
         print(f"There are {len(possible_words)} possible words.")
 
@@ -95,13 +96,13 @@ def play_hangman():
             print(f"It's obviously {possible_words[0]}.")
             break
 
-        stats_temp = get_statistics(possible_words)
+        stats_temp: Counter = get_statistics(possible_words)
 
-        stats = Counter({key: value for key, value in stats_temp.items() if key not in guesses})
+        stats: Counter = Counter({key: value for key, value in stats_temp.items() if key not in guesses})
 
         print("Your most likely letter is...")
-        likeliest_letter, likelihood = get_likeliest_letter(stats)
-        print(f"{likeliest_letter} with a likelihood of {likelihood:.2f}%")
+        likeliest_letter: typing.Tuple[str, float] = get_likeliest_letter(stats)
+        print(f"{likeliest_letter[0]} with a likelihood of {likeliest_letter[1]:.2f}%")
 
         was_correct = input("Was I correct? (y/n) ").lower() == 'y'
 
