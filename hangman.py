@@ -11,7 +11,7 @@ def get_words(word_len):
     return words
 
 
-def play_round_of_hangman(wrong_guesses, current_word):
+def play_round_of_hangman(guesses, current_word):
     # The total number of characters in the word.
     num_of_characters = len(current_word)
 
@@ -24,11 +24,11 @@ def play_round_of_hangman(wrong_guesses, current_word):
     # Regex will give us an error if we have
     # no wrong guesses, so if we don't need to exclude
     # anything, include everything!
-    if len(wrong_guesses) is 0:
+    if len(guesses) is 0:
         substitute = '.'
     else:
         # exclude all of the wrong guesses
-        substitute = f"[^{wrong_guesses}]"
+        substitute = f"[^{guesses}]"
 
     # Make the current_word a regex.
     current_word_regex = current_word.replace('_', substitute)
@@ -64,22 +64,28 @@ def get_statistics(possible_words):
 def play_hangman():
     is_playing = True
     # All of the characters that the computer guessed wrong.
-    wrong_guesses = ""
+    guesses = ""
 
     # the number of guesses the computer has made.
     num_of_guesses = 0
 
+    current_word = ""
+
+    was_correct = True
+
     while is_playing:
-        # Get input from user of what is the word at the running of the script.
-        print("What is currently on the board?")
-        current_word: str = input("(Input unknown characters with _) ").lower()
+        # Get input from the user if the current word on the board
+        # changed or is new.
+        if was_correct:
+            print("What is currently on the board?")
+            current_word = input("(Input unknown characters with _) ").lower()
 
         # if we found the word, we can stop playing.
         if current_word.count('_') is 0:
             break
 
         # Get all of the possible words that can be guessed
-        possible_words = play_round_of_hangman(wrong_guesses, current_word)
+        possible_words = play_round_of_hangman(guesses, current_word)
 
         print(f"There are {len(possible_words)} possible words.")
 
@@ -91,8 +97,7 @@ def play_hangman():
         stats = get_statistics(possible_words)
 
         # Remove characters we've already guessed from the statistics.
-        [stats.pop(guessed_letter, None) for guessed_letter in current_word.replace('_', '')]
-        [stats.pop(guessed_letter, None) for guessed_letter in wrong_guesses]
+        [stats.pop(guessed_letter, None) for guessed_letter in guesses]
 
         print("Your most likely letter is...")
 
@@ -108,8 +113,7 @@ def play_hangman():
         was_correct = input("Was I correct? (y/n) ").lower() == 'y'
 
         # If we weren't correct, add our guess to the wrong_guesses.
-        if not was_correct:
-            wrong_guesses += likeliest_letter
+        guesses += likeliest_letter
 
     print(f"It took me {num_of_guesses} guesses to get it.")
 
