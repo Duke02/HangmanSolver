@@ -115,4 +115,11 @@ def play_hangman():
 
 
 if __name__ == '__main__':
-    play_hangman()
+    play_again: bool = True
+    while play_again:
+        play_hangman()
+
+        play_again = input("Want to play again? (y/n) ").lower() == 'y'
+
+        # Print a new line to separate games.
+        print("")
