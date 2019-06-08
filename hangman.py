@@ -32,7 +32,7 @@ def get_possible_words(guesses, current_word):
         # exclude all of the wrong guesses
         substitute = f"[^{guesses}]"
 
-    # Make the current_word a regex.
+    # Make the current_word a regex phrase.
     current_word_regex = current_word.replace('_', substitute)
 
     # Get the regex object for the current word
@@ -105,6 +105,7 @@ def play_hangman():
         if len(possible_words) <= 10:
             [print(word) for word in possible_words]
 
+        # Early exit if it we only have one guess.
         if len(possible_words) is 1:
             print(f"It's obviously {possible_words[0]}.")
             break
