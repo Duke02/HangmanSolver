@@ -11,8 +11,7 @@ def get_words(word_len, filename="words.txt"):
     """
     with open(filename) as word_file:
         words_temp = map(lambda s: s.strip(), word_file.readlines())
-        words = [word.lower() for word in words_temp if len(word) == word_len]
-        words = list(set(words))
+        words = list({word.lower() for word in words_temp if len(word) == word_len})
     return words
 
 
@@ -27,15 +26,10 @@ def get_possible_words(guesses, current_word):
 
     num_of_characters = len(current_word)
 
-    words = get_words(num_of_characters)
-    # Get all words with just letters.
-    words = list(filter(lambda w: w.isalpha(), words))
+    words = list(filter(lambda w: w.isalpha(), get_words(num_of_characters)))
 
     # Exclude any guesses, include everything else.
-    if len(guesses) == 0:
-        substitute = '.'
-    else:
-        substitute = f"[^{guesses}]"
+    substitute = '.' if len(guesses) == 0 else f"[^{guesses}]"
 
     current_word_regex = current_word.replace('_', substitute)
     regex_obj = re.compile(current_word_regex)
@@ -111,14 +105,12 @@ def play_hangman():
             print(f"It's obviously {possible_words[0]}.")
             break
 
-        stats = get_statistics(possible_words)
+        stats_temp = get_statistics(possible_words)
 
-        [stats.pop(guessed_letter, None) for guessed_letter in guesses]
+        stats = {key: value for key, value in stats_temp.items() if key not in guesses}
 
         print("Your most likely letter is...")
-
         likeliest_letter, likelihood = get_likeliest_letter(stats)
-
         print(f"{likeliest_letter} with a likelihood of {likelihood:.2f}%")
 
         was_correct = input("Was I correct? (y/n) ").lower() == 'y'
