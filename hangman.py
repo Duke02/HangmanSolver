@@ -23,13 +23,13 @@ def get_possible_words(guesses, current_word):
     # Get all words with just letters.
     words = list(filter(lambda w: w.isalpha(), words))
 
-    # Regex will give us an error if we have
-    # no wrong guesses, so if we don't need to exclude
+    # Regex will give us an error if we have just started and
+    # no guesses, so if we don't need to exclude
     # anything, include everything!
     if len(guesses) is 0:
         substitute = '.'
     else:
-        # exclude all of the wrong guesses
+        # exclude all of the characters that have already been guessed.
         substitute = f"[^{guesses}]"
 
     # Make the current_word a regex phrase.
