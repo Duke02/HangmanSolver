@@ -61,6 +61,16 @@ def get_statistics(possible_words):
     return frequencies
 
 
+def get_likeliest_letter(stats):
+    # Get the most likely letter to guess.
+    likeliest_letter = max(stats, key=stats.get)
+
+    # Get the likelihood of the letter as a percent.
+    likelihood = stats[likeliest_letter] / sum(stats.values()) * 100.0
+
+    return likeliest_letter, likelihood
+
+
 def play_hangman():
     is_playing = True
     # All of the characters that the computer guessed wrong.
@@ -93,6 +103,10 @@ def play_hangman():
         if len(possible_words) <= 10:
             [print(word) for word in possible_words]
 
+        if len(possible_words) is 1:
+            print(f"It's obviously {possible_words[0]}.")
+            break
+
         # Get the frequencies of each character in the possible words.
         stats = get_statistics(possible_words)
 
@@ -101,18 +115,14 @@ def play_hangman():
 
         print("Your most likely letter is...")
 
-        # Get the most likely letter to guess.
-        likeliest_letter = max(stats, key=stats.get)
-
-        # Get the likelihood of the letter as a percent.
-        likelihood = stats[likeliest_letter] / sum(stats.values()) * 100.0
+        likeliest_letter, likelihood = get_likeliest_letter(stats)
 
         print(f"{likeliest_letter} with a likelihood of {likelihood:.2f}%")
 
-        num_of_guesses += 1
         was_correct = input("Was I correct? (y/n) ").lower() == 'y'
 
-        # If we weren't correct, add our guess to the wrong_guesses.
+        # add our guess to the total listing of guesses.
+        num_of_guesses += 1
         guesses += likeliest_letter
 
     print(f"It took me {num_of_guesses} guesses to get it.")
