@@ -91,3 +91,47 @@ What is currently on the board?
 (Input unknown characters with _) jawbreaker
 It took me 8 guesses to get it.
 ```
+
+Another example game where the word was `timothy`.
+```
+What is currently on the board?
+(Input unknown characters with _) _______
+There are 11681 possible words.
+Your most likely letter is...
+e with a likelihood of 12.02%
+Was I correct? (y/n) n
+
+There are 3953 possible words.
+Your most likely letter is...
+a with a likelihood of 11.08%
+Was I correct? (y/n) n
+
+There are 1616 possible words.
+Your most likely letter is...
+i with a likelihood of 13.81%
+Was I correct? (y/n) y
+
+What is currently on the board?
+(Input unknown characters with _) _i_____
+There are 106 possible words.
+Your most likely letter is...
+o with a likelihood of 14.62%
+Was I correct? (y/n) y
+
+What is currently on the board?
+(Input unknown characters with _) _i_o___
+There are 3 possible words.
+timothy
+bigotry
+disowns
+Your most likely letter is...
+t with a likelihood of 20.00%
+Was I correct? (y/n) y
+
+What is currently on the board?
+(Input unknown characters with _) ti_ot__
+There are 1 possible words.
+timothy
+It's obviously timothy.
+It took me 5 guesses to get it.
+```
