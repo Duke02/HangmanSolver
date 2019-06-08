@@ -35,7 +35,7 @@ def play_round_of_hangman(wrong_guesses, current_word):
     possible_matches = list(map(lambda word: regex_obj.match(word), words))
 
     # Get all the words from those matches (filter None matches)
-    possible_words = [match.string for match in possible_matches if not match is None]
+    possible_words = [match.string for match in possible_matches if match is not None]
 
     # Print the list of possible words.
     return possible_words
@@ -67,7 +67,6 @@ def play_hangman():
         current_word: str = input("What is currently on the board? ").lower()
 
         if current_word.count('_') is 0:
-            is_playing = False
             break
 
         num_of_guesses += 1
