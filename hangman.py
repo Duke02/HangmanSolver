@@ -1,4 +1,5 @@
 import re
+from functools import reduce
 from itertools import chain
 from collections import Counter
 import typing
@@ -58,6 +59,49 @@ def get_likeliest_letter(stats: Counter) -> typing.Tuple[str, float]:
     return likeliest_letter, likelihood
 
 
+def sanitize_user_input(user_input: str, last_user_input: str, initial_len_of_input: int) -> typing.Tuple[str, int]:
+    """
+    Corrects the user's input based on previous input.
+
+    :param last_user_input: The previous user input.
+    :param user_input: The current user input.
+    :param initial_len_of_input: The initial length of the user input.
+    :return: The correct user input and the correct length of the user input.
+    """
+
+    if initial_len_of_input == -1:
+        return user_input, len(user_input)
+
+    corrected_input: str = user_input
+
+    while len(corrected_input) != initial_len_of_input:
+        print("Your input is not the same length as it was the first time.")
+        print(f"Your last input was {last_user_input} and had {len(last_user_input)} characters in it.")
+        corrected_input = input("Try again. ").lower()
+
+    differences: typing.List[bool] = [last_user_input[i] != corrected_input[i]
+                                      for i in range(initial_len_of_input)
+                                      if last_user_input[i] != '_']
+
+    if len(differences) == 0:
+        return corrected_input, initial_len_of_input
+
+    has_differences: bool = all(differences) or reduce(lambda x, y: x != y, differences)
+
+    while has_differences:
+        print("Your input is not the same as it was the first time.")
+        print("You may have put a character in the wrong place.")
+        print(f"Your last input was {last_user_input}.")
+        corrected_input = input("Try again. ").lower()
+
+        differences = [last_user_input[i] != corrected_input[i]
+                       for i in range(initial_len_of_input)
+                       if last_user_input[i] != '_']
+        has_differences = all(differences) or reduce(lambda x, y: x != y, differences)
+
+    return corrected_input, initial_len_of_input
+
+
 def play_hangman():
     """
     Plays a game of hangman.
@@ -69,14 +113,18 @@ def play_hangman():
     guesses: str = ""
     current_word: str = ""
 
+    len_of_word: int = -1
+
     words: typing.Set[str] = set()
 
     while is_playing:
         # Get input from the user if the current word on the board
         # changed or is new.
         if was_correct:
+            last_word: str = current_word
             print("What is currently on the board?")
             current_word = input("(Input unknown characters with _) ").lower()
+            current_word, len_of_word = sanitize_user_input(current_word, last_word, len_of_word)
 
         # if we found the word, we can stop playing.
         if current_word.count('_') == 0:
