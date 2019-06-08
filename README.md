@@ -18,6 +18,13 @@ Hope you enjoy!
 For help with understanding Regex (regular expressions), [this
 site](https://regexr.com/) helped me a lot when I was first learning them.
 
+## Special Thanks
+Special thanks to the people that have helped me with the code 
+and how to improve its readability and focus on functional programming.
+While I didn't take all of their suggestions, I did try to incorporate
+most of them. Please give them an up vote 
+[here](https://codereview.stackexchange.com/questions/221898/functional-programming-hangman-practice).
+
 ## Example Game
 Here is an example of a game where the word was `jawbreaker`.
 ```
