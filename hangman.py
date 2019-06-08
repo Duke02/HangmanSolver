@@ -8,6 +8,8 @@ def get_words(word_len):
         words_temp = map(lambda s: s.strip(), word_file.readlines())
         # filter the words so that they have the same number of characters as the word in play.
         words = [word.lower() for word in words_temp if len(word) is word_len]
+        # Get rid of any possible duplicates in the file.
+        words = list(set(words))
     return words
 
 
