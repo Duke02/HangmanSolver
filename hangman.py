@@ -7,15 +7,17 @@ def get_words(word_len, filename="words.txt"):
 
     :param filename: The name of the file to load the words from.
     :param word_len: The desired length of words.
-    :return: a list of words of the given length.
+    :return: an iterable of words of the given length.
     """
     with open(filename) as word_file:
-        words_temp = map(lambda s: s.strip(), word_file.readlines())
-        words = list({word.lower() for word in words_temp if len(word) == word_len})
-    return words
+        return {
+            word.lower()
+            for word in map(str.strip, word_file.readlines())
+            if len(word) == word_len and word.isalpha()
+        }
 
 
-def get_possible_words(guesses, current_word):
+def get_possible_words(guesses, current_word, all_words):
     """
     Get all possible words based on the given `current_word` and `guesses`
 
@@ -24,20 +26,10 @@ def get_possible_words(guesses, current_word):
     :return: A list of all possible words.
     """
 
-    num_of_characters = len(current_word)
-
-    words = list(filter(lambda w: w.isalpha(), get_words(num_of_characters)))
-
-    # Exclude any guesses, include everything else.
     substitute = '.' if len(guesses) == 0 else f"[^{guesses}]"
-
-    current_word_regex = current_word.replace('_', substitute)
-    regex_obj = re.compile(current_word_regex)
-
-    possible_matches = list(map(lambda word: regex_obj.match(word), words))
-    possible_words = [match.string for match in possible_matches if match is not None]
-
-    return possible_words
+    # Make the current word a regex phrase.
+    current_word_regex = re.compile(current_word.replace('_', substitute))
+    return [word for word in all_words if current_word_regex.match(word)]
 
 
 def get_statistics(possible_words):
@@ -83,6 +75,8 @@ def play_hangman():
     guesses = ""
     current_word = ""
 
+    words = []
+
     while is_playing:
         # Get input from the user if the current word on the board
         # changed or is new.
@@ -94,7 +88,10 @@ def play_hangman():
         if current_word.count('_') == 0:
             break
 
-        possible_words = get_possible_words(guesses, current_word)
+        if len(words) == 0:
+            words = get_words(len(current_word))
+
+        possible_words = get_possible_words(guesses, current_word, words)
 
         print(f"There are {len(possible_words)} possible words.")
 
