@@ -11,7 +11,7 @@ def get_words(word_len, filename="words.txt"):
     """
     with open(filename) as word_file:
         words_temp = map(lambda s: s.strip(), word_file.readlines())
-        words = [word.lower() for word in words_temp if len(word) is word_len]
+        words = [word.lower() for word in words_temp if len(word) == word_len]
         words = list(set(words))
     return words
 
@@ -32,7 +32,7 @@ def get_possible_words(guesses, current_word):
     words = list(filter(lambda w: w.isalpha(), words))
 
     # Exclude any guesses, include everything else.
-    if len(guesses) is 0:
+    if len(guesses) == 0:
         substitute = '.'
     else:
         substitute = f"[^{guesses}]"
@@ -97,7 +97,7 @@ def play_hangman():
             current_word = input("(Input unknown characters with _) ").lower()
 
         # if we found the word, we can stop playing.
-        if current_word.count('_') is 0:
+        if current_word.count('_') == 0:
             break
 
         possible_words = get_possible_words(guesses, current_word)
@@ -107,7 +107,7 @@ def play_hangman():
         if len(possible_words) <= 10:
             [print(word) for word in possible_words]
 
-        if len(possible_words) is 1:
+        if len(possible_words) == 1:
             print(f"It's obviously {possible_words[0]}.")
             break
 
